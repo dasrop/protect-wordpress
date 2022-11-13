@@ -190,3 +190,32 @@ RewriteCond %{HTTP_REFERER} !.*exempel\.se.* [OR]
 RewriteCond %{HTTP_USER_AGENT} ^$
 RewriteRule ^(.*)$ ^https://%{REMOTE_ADDR}/$ [R=301,L]
 </IfModule>
+
+# Security related. Block browser access to log files
+<Files  ~ "\.log$">
+  Order allow,deny
+</Files>
+
+<IfModule mod_headers.c>
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+</IfModule>
+
+# Security related. May help against some types of drive-by-downloads
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options nosniff
+</IfModule>
+
+# Security related. May help against some types of cross-site scripting attacks
+<IfModule mod_headers.c>
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+#anti X-frame
+<IfModule mod_headers.c>
+Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+#Security Policy
+<ifModule mod_headers.c>
+Header always set Content-Security-Policy "default-src https: data: 'unsafe-inline' 'unsafe-eval'"
+</ifModule>
